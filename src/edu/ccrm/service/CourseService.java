@@ -8,41 +8,37 @@ import java.util.stream.Collectors;
 import edu.ccrm.domain.Course;
 import edu.ccrm.domain.Semester;
 import edu.ccrm.exception.CourseNotFoundException;
+import edu.ccrm.repository.ICourseRepository;
 
 public class CourseService {
-    private final DataStore dataStore;
+    private final ICourseRepository courseRepository;
 
-    public CourseService(DataStore dataStore) {
-        this.dataStore = dataStore;
+    public CourseService(ICourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
     }
 
     public void addCourse(Course course) {
-        dataStore.getCourses().put(course.getCourseCode().getFullCode(), course);
+        courseRepository.save(course);
     }
 
     public Course findCourseByCode(String courseCode) {
-        Course course = dataStore.getCourses().get(courseCode);
-        if (course == null) {
-            throw new CourseNotFoundException("Course with code '" + courseCode + "' not found.");
-        }
-        return course;
+        return courseRepository.findByCode(courseCode)
+            .orElseThrow(() -> new CourseNotFoundException(
+                "Course with code '" + courseCode + "' not found."));
     }
 
     public List<Course> getAllCourses() {
-        return dataStore.getCourses().values().stream()
+        return courseRepository.findAll().stream()
                 .sorted(Comparator.comparing(c -> c.getCourseCode().getFullCode()))
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Search and filter courses using the Stream API.
-     * Demonstrates: Functional interfaces (Predicate), Lambdas, Stream API.
-     */
     public List<Course> searchCourses(Predicate<Course> filter) {
-        return dataStore.getCourses().values().stream()
+        return courseRepository.findAll().stream()
                 .filter(filter)
                 .collect(Collectors.toList());
     }
+
 
     public static Predicate<Course> filterByInstructor(String instructorName) {
         return course -> course.getInstructor().getFullName().equalsIgnoreCase(instructorName);

@@ -4,22 +4,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import edu.ccrm.domain.Grade;
+import edu.ccrm.repository.IStudentRepository;
 
 public class ReportService {
-    private final DataStore dataStore;
+    private final IStudentRepository studentRepository;
 
-    public ReportService(DataStore dataStore) {
-        this.dataStore = dataStore;
+    public ReportService(IStudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
-    /**
-     * Generates a report on GPA distribution across all students.
-     * Demonstrates: Stream pipeline with aggregation (Collectors.groupingBy).
-     */
     public void generateGpaDistributionReport() {
         System.out.println("\n--- GPA Distribution Report ---");
 
-        Map<String, Long> gpaDistribution = dataStore.getStudents().values().stream()
+        Map<String, Long> gpaDistribution = studentRepository.findAll().stream()
                 .flatMap(student -> student.getEnrolledCourses().stream())
                 .map(enrollment -> enrollment.getGrade())
                 .filter(grade -> grade != Grade.NA)
