@@ -1,77 +1,124 @@
 package edu.ccrm.cli;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
-import edu.ccrm.cli.command.ManageCoursesCommand;
-import edu.ccrm.cli.command.ManageDataCommand;
-import edu.ccrm.cli.command.ManageEnrollmentsCommand;
-import edu.ccrm.cli.command.ManageStudentsCommand;
-import edu.ccrm.cli.command.MenuCommand;
-import edu.ccrm.cli.command.ShowReportsCommand;
+import edu.ccrm.cli.helpers.CourseManagementHelper;
+import edu.ccrm.cli.helpers.DataManagementHelper;
+import edu.ccrm.cli.helpers.EnrollmentManagementHelper;
+import edu.ccrm.cli.helpers.ReportManagementHelper;
+import edu.ccrm.cli.helpers.StudentManagementHelper;
 import edu.ccrm.config.AppConfig;
 import edu.ccrm.io.BackupService;
 import edu.ccrm.io.ImportExportService;
-import edu.ccrm.repository.CourseRepositoryImpl;
-import edu.ccrm.repository.ICourseRepository;
-import edu.ccrm.repository.IInstructorRepository;
-import edu.ccrm.repository.IStudentRepository;
-import edu.ccrm.repository.InstructorRepositoryImpl;
-import edu.ccrm.repository.StudentRepositoryImpl;
 import edu.ccrm.service.CourseService;
+import edu.ccrm.service.DataStore;
 import edu.ccrm.service.EnrollmentService;
 import edu.ccrm.service.ReportService;
 import edu.ccrm.service.StudentService;
+import edu.ccrm.service.bridge.ConsoleReportRenderer;
+import edu.ccrm.service.bridge.ReportRenderer;
+import edu.ccrm.service.decorator.EnrollmentServiceInterface;
+import edu.ccrm.service.decorator.LoggingEnrollmentDecorator;
+import edu.ccrm.service.mediator.EnrollmentMediator;
+import edu.ccrm.service.mediator.ServiceMediator;
+import edu.ccrm.service.observer.EnrollmentLogger;
+import edu.ccrm.service.observer.EnrollmentNotifier;
+import edu.ccrm.service.proxy.DataStoreInterface;
+import edu.ccrm.service.proxy.DataStoreProxy;
+import edu.ccrm.service.strategy.GradingStrategy;
+import edu.ccrm.service.strategy.StandardGradingStrategy;
 import edu.ccrm.util.InputValidator;
 
+/**
+ * Main entry point — wires together all design patterns:
+ *
+ * CREATIONAL:
+ *   - Singleton:       AppConfig.getInstance()
+ *   - Factory Method:  Used inside StudentCsvService, InstructorSetupService, StudentManagementHelper
+ *
+ * STRUCTURAL:
+ *   - Proxy:           DataStoreProxy wraps DataStore for validation
+ *   - Decorator:       LoggingEnrollmentDecorator wraps EnrollmentService
+ *   - Bridge:          ConsoleReportRenderer injected into ReportService
+ *   - Adapter:         CsvExportAdapter used inside StudentCsvService, EnrollmentCsvService
+ *
+ * BEHAVIORAL:
+ *   - Strategy:        StandardGradingStrategy injected into EnrollmentService
+ *   - Mediator:        EnrollmentMediator coordinates StudentService ↔ CourseService
+ *   - Observer:        EnrollmentLogger + EnrollmentNotifier registered as observers
+ */
 public class CliManager {
     private static final Scanner scanner = new Scanner(System.in);
 
-    private static final IStudentRepository studentRepo = new StudentRepositoryImpl();
-    private static final ICourseRepository courseRepo = new CourseRepositoryImpl();
-    private static final IInstructorRepository instructorRepo = new InstructorRepositoryImpl();
+    // ── Proxy Pattern: Wrapping DataStore with validation proxy ──
+    private static final DataStoreInterface dataStore = new DataStoreProxy(new DataStore());
 
-    private static final StudentService studentService = new StudentService(studentRepo);
-    private static final CourseService courseService = new CourseService(courseRepo);
-    private static final EnrollmentService enrollmentService = new EnrollmentService(studentService, courseService);
-    private static final ReportService reportService = new ReportService(studentRepo);
-    private static final ImportExportService importExportService = new ImportExportService(studentRepo, courseRepo, instructorRepo);
+    private static final StudentService studentService = new StudentService(dataStore);
+    private static final CourseService courseService = new CourseService(dataStore);
+
+    // ── Mediator Pattern: Coordinates between StudentService & CourseService ──
+    private static final ServiceMediator mediator = new EnrollmentMediator(studentService, courseService);
+
+    // ── Strategy Pattern: Pluggable grading algorithm ──
+    private static final GradingStrategy gradingStrategy = new StandardGradingStrategy();
+
+    // ── Observer + Decorator: Build enrollment service with all behavioral patterns ──
+    private static final EnrollmentService baseEnrollmentService =
+            new EnrollmentService(mediator, gradingStrategy);
+
+    // ── Decorator Pattern: Wrap with logging ──
+    private static final EnrollmentServiceInterface enrollmentService =
+            new LoggingEnrollmentDecorator(baseEnrollmentService);
+
+    // ── Bridge Pattern: Console renderer for reports ──
+    private static final ReportRenderer reportRenderer = new ConsoleReportRenderer();
+    private static final ReportService reportService = new ReportService(dataStore, reportRenderer);
+
+    private static final ImportExportService importExportService = new ImportExportService(dataStore);
     private static final BackupService backupService = new BackupService();
 
-    private static final Map<Integer, MenuCommand> commands = new HashMap<>();
-
-    static {
-        commands.put(1, new ManageStudentsCommand(studentService, studentRepo));
-        commands.put(2, new ManageCoursesCommand(courseService));
-        commands.put(3, new ManageEnrollmentsCommand(enrollmentService));
-        commands.put(4, new ManageDataCommand(importExportService, backupService));
-        commands.put(5, new ShowReportsCommand(reportService));
-    }
+    // ── Factory Method Pattern: Used internally by helpers ──
+    private static final StudentManagementHelper studentHelper =
+            new StudentManagementHelper(studentService, dataStore);
+    private static final CourseManagementHelper courseHelper =
+            new CourseManagementHelper(courseService);
+    private static final EnrollmentManagementHelper enrollmentHelper =
+            new EnrollmentManagementHelper(enrollmentService);
+    private static final DataManagementHelper dataHelper =
+            new DataManagementHelper(importExportService, backupService);
+    private static final ReportManagementHelper reportHelper =
+            new ReportManagementHelper(reportService);
 
     public static void main(String[] args) {
+        // ── Observer Pattern: Register observers for enrollment events ──
+        baseEnrollmentService.addObserver(new EnrollmentLogger());
+        baseEnrollmentService.addObserver(new EnrollmentNotifier());
+
         System.out.println("Welcome to the Student Course & Enrollment Management System!");
         System.out.println("Configuration loaded. Data directory: " + AppConfig.getInstance().getDataDirectory());
 
         importExportService.importData();
 
-        while (true) {
+        boolean running = true;
+        while (running) {
             printMainMenu();
             int choice = InputValidator.getInt(scanner, "Enter your choice: ");
 
-            if (choice == 6) {
-                System.out.println("Exiting application...");
-                printPlatformNote();
-                break;
-            }
-
-            MenuCommand command = commands.get(choice);
-            if (command != null) {
-                command.execute(scanner);
-            } else {
-                System.out.println("Invalid choice. Please try again.");
+            switch (choice) {
+                case 1 -> studentHelper.handleStudentManagement(scanner);
+                case 2 -> courseHelper.handleCourseManagement(scanner);
+                case 3 -> enrollmentHelper.handleEnrollmentManagement(scanner);
+                case 4 -> dataHelper.handleDataManagement(scanner);
+                case 5 -> reportHelper.handleReports(scanner);
+                case 6 -> {
+                    System.out.println("Exiting application...");
+                    printPlatformNote();
+                    running = false;
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
             }
         }
+
         scanner.close();
     }
 
@@ -88,7 +135,7 @@ public class CliManager {
     private static void printPlatformNote() {
         System.out.println("\n--- Java Platform Summary ---");
         System.out.println(" * Java SE (Standard Edition): Core Java platform for desktop and server applications.");
-        System.out.println(" * Java EE (Enterprise Edition): Built on SE, adds APIs for large-scale, distributed enterprise applications.");
+        System.out.println(" * Java EE (Enterprise Edition): Built on SE, adds APIs for large-scale enterprise applications.");
         System.out.println(" * Java ME (Micro Edition): A subset of SE for resource-constrained devices.");
         System.out.println("-----------------------------\n");
     }
