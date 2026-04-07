@@ -11,14 +11,13 @@ import edu.ccrm.domain.Course;
 import edu.ccrm.domain.CourseCode;
 import edu.ccrm.domain.Instructor;
 import edu.ccrm.domain.Semester;
-import edu.ccrm.service.proxy.DataStoreInterface;
-
+import edu.ccrm.service.DataStore;
 
 public class CourseCsvService {
-    private final DataStoreInterface dataStore;
+    private final DataStore dataStore;
     private final Path dataDir;
     
-    public CourseCsvService(DataStoreInterface dataStore, Path dataDir) {
+    public CourseCsvService(DataStore dataStore, Path dataDir) {
         this.dataStore = dataStore;
         this.dataDir = dataDir;
     }
@@ -63,4 +62,5 @@ public class CourseCsvService {
                         course.getInstructor().getId(), course.getDepartment()))
                 .collect(Collectors.toList());
     }
+
 }

@@ -5,18 +5,15 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import edu.ccrm.domain.Student;
-import edu.ccrm.factory.StudentFactory;
+import edu.ccrm.service.DataStore;
 import edu.ccrm.service.StudentService;
-import edu.ccrm.service.proxy.DataStoreInterface;
 import edu.ccrm.util.InputValidator;
-
 
 public class StudentManagementHelper {
     private final StudentService studentService;
-    private final DataStoreInterface dataStore;
-    private final StudentFactory studentFactory = new StudentFactory();
+    private final DataStore dataStore;
     
-    public StudentManagementHelper(StudentService studentService, DataStoreInterface dataStore) {
+    public StudentManagementHelper(StudentService studentService, DataStore dataStore) {
         this.studentService = studentService;
         this.dataStore = dataStore;
     }
@@ -47,7 +44,7 @@ public class StudentManagementHelper {
         LocalDate dob = LocalDate.parse(InputValidator.getString(scanner, "Date of Birth (YYYY-MM-DD): "));
         
         int newId = dataStore.getAllStudents().size() + 1;
-        Student newStudent = studentFactory.createPerson(newId, name, email, dob, regNo);
+        Student newStudent = new Student(newId, regNo, name, email, dob);
         studentService.addStudent(newStudent);
         System.out.println("Student added successfully.");
     }

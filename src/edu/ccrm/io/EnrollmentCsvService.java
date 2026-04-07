@@ -6,18 +6,14 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.ccrm.io.adapter.CsvExportAdapter;
-import edu.ccrm.io.adapter.ExportFormatAdapter;
-import edu.ccrm.service.proxy.DataStoreInterface;
+import edu.ccrm.service.DataStore;
 import edu.ccrm.util.RecursiveFileUtils;
 
-
 public class EnrollmentCsvService {
-    private final DataStoreInterface dataStore;
+    private final DataStore dataStore;
     private final Path dataDir;
-    private final ExportFormatAdapter formatAdapter = new CsvExportAdapter();
     
-    public EnrollmentCsvService(DataStoreInterface dataStore, Path dataDir) {
+    public EnrollmentCsvService(DataStore dataStore, Path dataDir) {
         this.dataStore = dataStore;
         this.dataDir = dataDir;
     }
@@ -29,10 +25,13 @@ public class EnrollmentCsvService {
         
         List<String> lines = dataStore.getAllStudents().stream()
             .flatMap(student -> student.getEnrolledCourses().stream()
-                .map(en -> formatAdapter.formatEnrollmentRecord(student, en)))
+                .map(en -> String.format("%s,%s,%s",
+                		student.getRegNo(),
+                    en.getCourse().getCourseCode().getFullCode(),
+                    en.getGrade())))
             .collect(Collectors.toList());
         
-        lines.add(0, formatAdapter.getEnrollmentHeader());
+        lines.add(0, "regNo,courseCode,grade");
         Files.write(enrollmentsFile, lines);
     }
 }
