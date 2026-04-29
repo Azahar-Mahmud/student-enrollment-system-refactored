@@ -1,170 +1,219 @@
 # Student Course & Enrollment Management System
 
-This project is a comprehensive, command-line-based student management system developed in Java. It demonstrates a wide range of core Java features, from fundamental syntax and object-oriented principles to advanced topics like the Stream API, NIO.2 for file I/O, and modern design patterns. The application is built with a clear, package-based architecture to ensure separation of concerns.
+A comprehensive command-line-based student management system demonstrating advanced software architecture principles, design patterns, and systematic refactoring from legacy code to enterprise-grade architecture.
 
-## How to Run
+---
+
+## Refactoring Team
+
+**Group 2 - CSE423 Software Architecture**
+
+| Name | Student ID |
+|------|------------|
+| Azahar Mahmud Chowdhury Rafi | 2021-3-60-019 |
+| Sheikh Md Rakibul Hasan | 2022-3-60-009 |
+| Ahnaf Anan | 2023-1-60-089 |
+
+**Course:** CSE423 - Software Architecture  
+**Instructor:** Ahmed Adnan, Lecturer  
+**Institution:** East West University, Department of Computer Science and Engineering  
+**Semester:** Spring 2026
+
+---
+
+## Complete Commit History
+
+- **Initial Legacy Code:** [661e1dd](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/661e1dd) - Before Refactoring
+- **Phase 1 - SOLID Principles Implementation (Final):** [0bc2f19](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/0bc2f19) - March 13, 2026
+- **Phase 2 - Code Smell Refactoring (Final):** [1091089](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/1091089) - April 6, 2026
+- **Phase 3 - Design Patterns Integration (Final):** [2cca3b2](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/2cca3b2) - April 7, 2026
+
+---
+
+## Original Project
+
+**Base Project:** Student Enrollment Management System  
+**Initial Commit:** [661e1dd](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/661e1dd) - Legacy Codebase (Before Refactoring)
+
+This project serves as the foundation for demonstrating evolutionary software design through three major refactoring phases.
+
+---
+
+## Setup & Run Instructions
 
 ### Prerequisites
-* **Java Development Kit (JDK):** Version 11 or higher.
-* **Git:** To clone the repository.
-* **(Optional) IDE:** Eclipse or IntelliJ IDEA.
+* Java Development Kit (JDK): Version 11 or higher
+* Git: To clone the repository
+* (Optional) IDE: Eclipse or IntelliJ IDEA
 
-### 1. From the Command Line
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/your-username/student-enrollment-system.git](https://github.com/your-username/student-enrollment-system.git)
-    cd student-enrollment-system
-    ```
-2.  **Create the data directory:**
-    ```bash
-    mkdir data
-    ```
-    Create `students.csv` and `courses.csv` inside the `data` folder and populate them with the sample data.
+### Command Line
 
-3.  **Compile all source files:**
-    ```bash
-    # Create a directory for compiled classes
-    mkdir bin
+```bash
+# Clone the repository
+git clone https://github.com/Azahar-Mahmud/student-enrollment-system-refactored.git
+cd student-enrollment-system-refactored
 
-    # Compile (for macOS/Linux)
-    javac -d bin $(find src -name "*.java")
+# Create data directory with sample CSV files
+mkdir data
 
-    # Compile (for Windows)
-    javac -d bin src\edu\ccrm\cli\*.java src\edu\ccrm\config\*.java src\edu\ccrm\domain\*.java src\edu\ccrm\exception\*.java src\edu\ccrm\io\*.java src\edu\ccrm\service\*.java src\edu\ccrm\util\*.java
-    ```
+# Compile all source files
+mkdir bin
+javac -d bin $(find src -name "*.java")
 
-4.  **Run the application:**
-    ```bash
-    java -cp bin edu.ccrm.cli.CliManager
-    ```
----
-### 2. From an IDE (Eclipse/IntelliJ)
-1.  Clone the repository.
-2.  Import the project into your IDE (e.g., in Eclipse, `File > Import > Maven > Existing Maven Projects`).
-3.  Create the `data` folder in the project's root directory, alongside `src`. Add the sample `students.csv` and `courses.csv` files.
-4.  Locate the `CliManager.java` file in `src/edu/ccrm/cli/`.
-5.  Right-click the file and select `Run As > Java Application`.
-
-## Java Platform Overview
-
-### Evolution of Java ☕
-* **1995:** Java 1.0 is released by Sun Microsystems with the motto "Write Once, Run Anywhere."
-* **1998:** J2SE 1.2 (Java 2) is released, introducing the Swing GUI toolkit and Collections framework.
-* **2004:** J2SE 5.0 (Tiger) introduces major language features like Generics, Enums, Autoboxing, and Annotations.
-* **2011:** Oracle acquires Sun. Java SE 7 is released with features like the Fork/Join framework and `try-with-resources`.
-* **2014:** Java SE 8 marks a revolutionary release with Lambda Expressions, the Stream API, and a new Date/Time API.
-* **2017-Present:** Java moves to a faster, 6-month release cycle starting with Java 9, introducing features like the Module System, `var` for local variables (Java 10), and enhanced `switch` expressions and Text Blocks (Java 14+).
-
-### Java ME vs SE vs EE
-| Feature           | Java ME (Micro Edition)                          | Java SE (Standard Edition)                            | Java EE (Enterprise Edition)                          |
-| ----------------- | ------------------------------------------------ | ----------------------------------------------------- | ----------------------------------------------------- |
-| **Purpose** | Resource-constrained devices (e.g., embedded systems) | General-purpose desktop, server, and console apps     | Large-scale, distributed, network-centric applications |
-| **Core API** | A small subset of the Java SE API                | The core Java platform (JVM, Collections, I/O, etc.) | Built on top of Java SE, adding more APIs           |
-| **Key Libraries** | `CLDC`, `MIDP` for mobile profiles               | `java.lang`, `java.util`, `java.io`, Swing, JavaFX | Servlets, JSP, EJB, JPA, JMS, Web Services (JAX-RS)   |
-| **Example App** | An application on a smart card or older feature phone. | This project, a desktop calculator, Minecraft.        | A large banking portal or a multi-tier e-commerce site. |
-
-### JDK vs JRE vs JVM
-* **JVM (Java Virtual Machine):** The abstract machine that executes Java bytecode. It's the "Run Anywhere" part, as JVMs are platform-specific (Windows, macOS, Linux) but all run the same universal bytecode. It handles memory management, garbage collection, and security.
-* **JRE (Java Runtime Environment):** The software package that provides the JVM and the necessary libraries to *run* Java applications. If you only want to run a Java program, you only need the JRE.
-* **JDK (Java Development Kit):** The full development kit for Java programmers. It includes everything the JRE has, plus development tools like the **compiler** (`javac`), **debugger** (`jdb`), and documentation generator (`javadoc`). You need the JDK to *write* and compile Java code.
-
-**Interaction:** A developer writes Java code (`.java` files) and uses the **JDK** to compile it into bytecode (`.class` files). To run the program, the **JRE** is launched, which starts up a **JVM** instance to execute that bytecode.
-
-
-## Installation & Setup Guide
-
-### Installing Java JDK on Windows
-1.  **Download the JDK:** Go to the [Oracle Java Downloads page](https://www.oracle.com/java/technologies/downloads/) and download the Windows x64 Installer for a recent JDK version (e.g., JDK 21).
-2.  **Run the Installer:** Double-click the downloaded `.exe` file and follow the on-screen instructions. It's usually a straightforward "Next, Next, Finish" process.
-3.  **Configure Environment Variables:**
-    * Search for "Edit the system environment variables" in the Start Menu and open it.
-    * Click the "Environment Variables..." button.
-    * Under "System variables," find the `Path` variable, select it, and click "Edit...".
-    * Click "New" and add the path to your JDK's `bin` folder. This is typically `C:\Program Files\Java\jdk-21\bin`.
-    * (Optional but recommended) Create a new system variable called `JAVA_HOME` and set its value to the JDK installation directory (e.g., `C:\Program Files\Java\jdk-21`).
-4.  **Verify the Installation:** Open a new Command Prompt and run `java -version`. You should see the version of the JDK you just installed.
-
-### Using Eclipse IDE
-1.  **Create a New Project:**
-    * Go to `File > New > Java Project`.
-    * Give your project a name (e.g., `StudentEnrollmentSystem`).
-    * Ensure the "Use an execution environment JRE" is set to your installed JDK version. Click Finish.
-2.  **Set up Run Configuration:**
-    * After adding the code, right-click on `CliManager.java` in the Package Explorer.
-    * Select `Run As > Run Configurations...`.
-    * A configuration for `CliManager` should already exist. You can review the settings in the "Main" and "Arguments" tabs if needed.
-    * Click **Run**.
-## Syllabus Topic to Code Mapping
-| Syllabus Topic                   | File/Class/Method Where Demonstrated                                |
-| -------------------------------- | ------------------------------------------------------------------- |
-| **Packages & `main` class** | Project structure (`edu.ccrm.*`), `CliManager.main()`               |
-| **Primitives, Objects, Operators** | Used throughout all classes (e.g., `int`, `String`, arithmetic in `calculateGpa`) |
-| **Decision Structures (if/switch)**| `CliManager.manageStudents()`, `Grade.fromMarks()`, `CliManager.main()` loop switch |
-| **Loops (for, while, enhanced)** | `CliManager.main()` (`while`), `EnrollmentService` (`enhanced for`)   |
-| **Jump Control (break, continue)** | `CliManager.main()` (labeled `break OUTER_LOOP`)                     |
-| **Arrays & `Arrays` class** | `CliManager.manageStudents()` (`Arrays.toString` on enum values)   |
-| **Strings & common methods** | `ImportExportService` (`split`, `join`), `CourseCode` (`replaceAll`) |
-| **OOP - Encapsulation** | `Person.java`, `Student.java` (private fields, public getters/setters) |
-| **OOP - Inheritance** | `Student` and `Instructor` extend `Person`                        |
-| **OOP - Abstraction** | `Person` is an `abstract` class with an `abstract` method `getProfile()` |
-| **OOP - Polymorphism** | `student.getProfile()` in `getStudentTranscript()` invokes the correct method |
-| **Constructors & `super`** | `Student` constructor calls `super()` to initialize `Person` fields |
-| **Immutability** | `CourseCode.java` (final fields, no setters)                        |
-| **Nested & Inner Classes** | `Course.Builder` (static nested), `EnrollmentService.EnrollmentFinder` (inner) |
-| **Interfaces** | *Planned for future extension (e.g., `Persistable` interface)* |
-| **Functional Interfaces & Lambdas**| `CourseService.searchCourses()` uses `Predicate`, lambdas for sorting/filtering |
-| **Anonymous Inner Class** | *(Replaced with lambda for comparator for modern syntax)* |
-| **Enums with constructors** | `Grade.java`, `Semester.java`                                       |
-| **Upcast/Downcast & `instanceof`** | *(Not explicitly needed in this design but can be shown if adding different Person types)* |
-| **Overriding & Overloading** | `toString()` and `getProfile()` are overridden in subclasses        |
-| **Design Pattern - Singleton** | `AppConfig.getInstance()`                                           |
-| **Design Pattern - Builder** | `Course.Builder` nested class                                       |
-| **Exceptions (Custom, Checked)** | `MaxCreditLimitExceededException` (checked), `CourseNotFoundException` (unchecked) |
-| **`try-catch-finally`** | `CliManager.manageEnrollments()`, `ImportExportService.importData()` |
-| **File I/O (NIO.2 - `Path`, `Files`)** | `ImportExportService.java`, `BackupService.java`                    |
-| **Streams for File I/O** | `ImportExportService` uses `Files.lines()` and Stream pipelines   |
-| **Date/Time API (`java.time`)** | `Student.registrationDate`, `BackupService` timestamp, `Person.dateOfBirth` |
-| **Stream API (filter, map, etc.)** | `CourseService.searchCourses()`, `ReportService.generateGpaDistributionReport()` |
-
-## Notes
-
-### Enabling Assertions
-Assertions are used in this project (e.g., in `CourseCode.java`) to check for internal invariants. By default, they are disabled at runtime. To enable them:
-* **From the Command Line:** Use the `-ea` (enable assertions) flag.
-    ```bash
-    java -ea -cp bin edu.ccrm.cli.CliManager
-    ```
-* **In Eclipse:**
-    1.  Go to `Run > Run Configurations...`.
-    2.  Select your `CliManager` configuration.
-    3.  Go to the **Arguments** tab.
-    4.  In the **VM arguments** box, type `-ea`.
-    5.  Click Apply, then Run.
-
-### Sample Commands
-Here is a sample workflow you can follow when running the application:
-1.  **List all courses:** `2` (Manage Courses) -> `1` (List All)
-2.  **List all students:** `1` (Manage Students) -> `2` (List All)
-3.  **Enroll student `S001` in course `CS201`:** `3` (Manage Enrollments) -> `1` (Enroll) -> `S001` -> `CS201`
-4.  **Record a grade:** `3` (Manage Enrollments) -> `2` (Record Grade) -> `S001` -> `CS201` -> `85` (marks)
-5.  **View student transcript:** `1` (Manage Students) -> `3` (View Transcript) -> `S001`
-6.  **Export current data:** `4` (Data Management) -> `1` (Export)
-7.  **Create a backup:** `4` (Data Management) -> `2` (Backup)
-8.  **View a report:** `5` (View Reports) -> `1` (GPA Distribution)
-9.  **Exit:** `6`
-
-# Application Usage Guide
-
-This guide provides the necessary data files and a sample command workflow to demonstrate the core features of the Student Course & Enrollment Management System.
-
-## Sample Data Files 
-
-For the application to work, create a `data` folder in the root of your project and add the following files.
-
-### `data/students.csv`
-```csv
-id,regNo,fullName,email,dob
-1,S001,Alice Johnson,alice.j@example.com,2002-05-15
-2,S002,Bob Williams,bob.w@example.com,2001-08-22
-3,S003,Charlie Brown,charlie.b@example.com,2002-11-30
+# Run the application
+java -cp bin edu.ccrm.cli.CliManager
 ```
+
+### IDE (Eclipse/IntelliJ)
+
+1. Clone the repository
+2. Import as Java project
+3. Create `data` folder in project root with sample CSV files
+4. Run `CliManager.java` as Java Application
+
+---
+
+## Project Evolution
+
+This system underwent three systematic refactoring phases, transforming from a monolithic legacy codebase to a well-architected enterprise system following industry-standard principles and patterns.
+
+### Phase 1: SOLID Principles Implementation (Final)
+
+**Commit:** [0bc2f19](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/0bc2f19)  
+**Date:** March 13, 2026
+
+Established clean architecture foundation by applying SOLID principles across all layers.
+
+**Service Layer Refactoring:**
+- **Dependency Inversion Principle (DIP):** Introduced repository abstraction layer (`IStudentRepository`, `ICourseRepository`, `IInstructorRepository`) to decouple services from concrete data storage
+- **Single Responsibility Principle (SRP):** Extracted validation logic from `EnrollmentService` into dedicated validation methods (`validateNoDuplicate`, `validateCreditLimit`)
+
+**CLI Layer Refactoring:**
+- **SRP & OCP:** Decomposed monolithic `CliManager` (7+ responsibilities) into focused command classes:
+  - `ManageStudentsCommand` - Student operations
+  - `ManageCoursesCommand` - Course management
+  - `ManageEnrollmentsCommand` - Enrollment & grading
+  - `ManageDataCommand` - Import/export/backup
+  - `ShowReportsCommand` - Report generation
+- **DIP:** Introduced `MenuCommand` interface for dependency injection through map-based dispatcher
+
+**I/O Layer Refactoring:**
+- **OCP & SRP:** Replaced monolithic `ImportExportService` (6+ responsibilities) with interface-based design
+- Created `ICsvImporter`/`ICsvExporter` interfaces for abstraction
+- Implemented specialized handlers: `StudentCsvImporter`, `CourseCsvImporter`, `StudentCsvExporter`, `CourseCsvExporter`, `EnrollmentCsvExporter`
+- System now open for extension (new CSV types) but closed for modification
+
+---
+
+### Phase 2: Code Smell Refactoring (Final)
+
+**Commit:** [1091089](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/1091089)  
+**Date:** April 6, 2026
+
+Systematically eliminated code smells and applied classic refactoring techniques to improve code quality.
+
+**Code Smells Addressed:**
+
+1. **Inappropriate Naming**
+   - Renamed cryptic variable names to meaningful identifiers:
+     - `e` → `enrollment`
+     - `en` → `enrollment`
+     - `s` → `student`
+     - `c` → `course`
+     - `ss` → `studentService`
+     - `cs` → `courseService`
+   - Impact: Improved code readability and self-documentation
+
+2. **Comments Smell (Deodorant Comments)**
+   - Removed comments that explained bad code by extracting methods with self-documenting names
+   - Files refactored: `BackupService`, `CourseManagementHelper`
+   - Comments explaining complex logic replaced with descriptive method names
+
+3. **Long Method**
+   - Broke down `getStudentTranscript()` in `StudentService` into 7 focused methods
+   - Each method has single, clear responsibility
+   - Improved testability, maintainability, and code readability through logical decomposition
+
+4. **Primitive Obsession**
+   - Replaced magic numbers with named constants:
+     - `VALID_GRADE_THRESHOLD = 0.0` (instead of hardcoded `0`)
+   - Extracted inline lambda expressions into descriptive methods:
+     - `getNoFilterPredicate()` - Clear intent for "no filtering"
+     - `hasValidGrade()` - Explicit grade validation logic
+   - Files improved: `CourseManagementHelper`, `ReportService`
+
+5. **Duplicated Code**
+   - Extracted duplicated GPA calculation logic into dedicated `GpaCalculator` utility class
+   - Consolidated recursive file operations from `BackupService` into `RecursiveFileUtils`
+   - Moved transcript formatting logic into `TranscriptFormatter` class
+   - Impact: Eliminated code duplication across service layer
+
+**Refactoring Techniques Applied:**
+
+- **Extract Method:** Applied to decompose long methods (`getStudentTranscript`), eliminate deodorant comments (`BackupService`), and replace primitive lambda expressions with named methods (`CourseManagementHelper`, `ReportService`)
+- **Rename Method/Variable:** Systematically improved naming throughout the codebase
+- **Introduce Constants:** Replaced magic numbers with named constants (`VALID_GRADE_THRESHOLD = 0.0`) for maintainability
+
+---
+
+### Phase 3: Design Patterns Integration (Final)
+
+**Commit:** [2cca3b2](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/2cca3b2)  
+**Date:** April 7, 2026
+
+Integrated 9 industry-standard Gang of Four design patterns to achieve enterprise-grade flexibility, extensibility, and maintainability.
+
+**Creational Patterns:**
+
+1. **Singleton (Thread-Safe)**
+   - **Problem:** Original `AppConfig` was not thread-safe; multiple threads could create multiple instances
+   - **Solution:** Implemented double-checked locking with `volatile` keyword
+   - **Benefit:** Guaranteed single instance even in multi-threaded environment
+
+2. **Factory Method**
+   - **Problem:** Object creation (`new Student()`, `new Instructor()`) scattered across codebase; constructor changes required hunting down multiple files
+   - **Solution:** Created `PersonFactory` (abstract), `StudentFactory`, `InstructorFactory`
+   - **Benefit:** Centralized creation logic; single point of modification
+
+**Structural Patterns:**
+
+3. **Adapter**
+   - **Problem:** CSV formatting logic hardcoded in export services; switching to JSON/XML would require rewriting services
+   - **Solution:** Introduced `ExportFormatAdapter` interface, `CsvExportAdapter` implementation
+   - **Benefit:** Export service format-agnostic; easy to add new formats
+
+4. **Decorator**
+   - **Problem:** Adding audit logging to `EnrollmentService` would violate Open-Closed Principle
+   - **Solution:** Created `EnrollmentServiceInterface`, `LoggingEnrollmentDecorator` wrapping concrete service
+   - **Benefit:** Non-invasive feature addition; preserves original service integrity
+
+5. **Bridge**
+   - **Problem:** Report generation logic and display logic (System.out) tightly coupled in `ReportService`
+   - **Solution:** Separated abstraction (`Report`, `GpaDistributionReport`) from implementor (`ReportRenderer`, `ConsoleReportRenderer`)
+   - **Benefit:** Reports can be rendered to console, GUI, PDF independently
+
+6. **Proxy**
+   - **Problem:** `DataStore` accepted invalid data (nulls, empty strings) with no validation
+   - **Solution:** Created `DataStoreProxy` acting as validation gatekeeper before real store
+   - **Benefit:** Access control and validation without bloating storage layer
+
+**Behavioral Patterns:**
+
+7. **Strategy**
+   - **Problem:** Grading formula hardcoded in `Grade` enum; couldn't support curved or lenient grading
+   - **Solution:** Extracted `GradingStrategy` interface, `StandardGradingStrategy`, `RelativeGradingStrategy`
+   - **Benefit:** Grading algorithms swappable at runtime
+
+8. **Observer**
+   - **Problem:** Enrollment success printed directly with `System.out.println`; adding email notifications would require modifying service
+   - **Solution:** Implemented `EnrollmentObserver` pattern with `EnrollmentNotifier`, `EnrollmentLogger`
+   - **Benefit:** Multiple observers can react to enrollment events asynchronously
+
+9. **Mediator**
+   - **Problem:** `EnrollmentService` tightly coupled to both `StudentService` and `CourseService`; adding more services would create tangled dependencies
+   - **Solution:** Introduced `ServiceMediator` interface, `EnrollmentMediator`
+   - **Benefit:** Services communicate through central mediator; fully decoupled
+
+---
+
+**Acknowledgments:** Special thanks to our instructor Ahmed Adnan for guidance on software architecture principles and design pattern implementation that made this comprehensive refactoring journey possible.
