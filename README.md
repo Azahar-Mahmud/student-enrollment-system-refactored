@@ -24,8 +24,8 @@ A comprehensive command-line-based student management system demonstrating advan
 ## Complete Commit History
 
 - **Initial Legacy Code:** [661e1dd](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/661e1dd) - Before Refactoring
-- **Phase 1 - SOLID Principles Implementation (Final):** [0bc2f19](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/0bc2f19) - March 13, 2026
-- **Phase 2 - Code Smell Refactoring (Final):** [1091089](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/1091089) - April 6, 2026
+- **Phase 1 - SOLID Principles Implementation (Final):** [0bc2f19](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/0bc2f19) - February 11, 2026
+- **Phase 2 - Code Smell Refactoring (Final):** [1091089](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/1091089) - March 14, 2026
 - **Phase 3 - Design Patterns Integration (Final):** [2cca3b2](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/2cca3b2) - April 7, 2026
 - **Phase 4 - Architectural Patterns Documentation:** [72c3bd6](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/72c3bd6) - May 1, 2026
 
@@ -81,7 +81,7 @@ This system underwent four systematic phases, transforming from a monolithic leg
 ### Phase 1: SOLID Principles Implementation (Final)
 
 **Commit:** [0bc2f19](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/0bc2f19)  
-**Date:** March 13, 2026
+**Date:** February 11, 2026
 
 Established clean architecture foundation by applying SOLID principles across all layers.
 
@@ -109,7 +109,7 @@ Established clean architecture foundation by applying SOLID principles across al
 ### Phase 2: Code Smell Refactoring (Final)
 
 **Commit:** [1091089](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/1091089)  
-**Date:** April 6, 2026
+**Date:** March 14, 2026
 
 Systematically eliminated code smells and applied classic refactoring techniques to improve code quality.
 
