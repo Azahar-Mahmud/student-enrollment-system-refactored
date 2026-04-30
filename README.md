@@ -27,6 +27,7 @@ A comprehensive command-line-based student management system demonstrating advan
 - **Phase 1 - SOLID Principles Implementation (Final):** [0bc2f19](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/0bc2f19) - March 13, 2026
 - **Phase 2 - Code Smell Refactoring (Final):** [1091089](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/1091089) - April 6, 2026
 - **Phase 3 - Design Patterns Integration (Final):** [2cca3b2](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/2cca3b2) - April 7, 2026
+- **Phase 4 - Architectural Patterns Documentation:** [72c3bd6](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/72c3bd6) - May 1, 2026
 
 ---
 
@@ -75,7 +76,7 @@ java -cp bin edu.ccrm.cli.CliManager
 
 ## Project Evolution
 
-This system underwent three systematic refactoring phases, transforming from a monolithic legacy codebase to a well-architected enterprise system following industry-standard principles and patterns.
+This system underwent four systematic phases, transforming from a monolithic legacy codebase to a well-architected enterprise system following industry-standard principles, patterns, and architectural documentation.
 
 ### Phase 1: SOLID Principles Implementation (Final)
 
@@ -213,6 +214,57 @@ Integrated 9 industry-standard Gang of Four design patterns to achieve enterpris
    - **Problem:** `EnrollmentService` tightly coupled to both `StudentService` and `CourseService`; adding more services would create tangled dependencies
    - **Solution:** Introduced `ServiceMediator` interface, `EnrollmentMediator`
    - **Benefit:** Services communicate through central mediator; fully decoupled
+
+---
+
+### Phase 4: Architectural Patterns Documentation
+
+**Commit:** [72c3bd6](https://github.com/Azahar-Mahmud/student-enrollment-system-refactored/commit/72c3bd6)  
+**Date:** May 1, 2026
+
+Documented comprehensive system architecture using industry-standard architectural patterns and diagrams to provide clear visualization of system structure and component interactions.
+
+**Architecture Diagrams Created:**
+
+1. **System Context Diagram**
+   - Identified system boundaries and external actors (Administrator, Instructor, Student)
+   - Mapped interactions with File System Storage (CSV Data Files, Backups Directory)
+   - Established System under Consideration (SuC) scope
+
+2. **Archetype 1: Layered Architecture**
+   - **Presentation Archetype:** CliManager, Command Registry, Management Helpers
+   - **Business Logic Archetype:** StudentService, CourseService, EnrollmentService, ReportService with integrated design patterns (Observer, Mediator, Decorator, Strategy, Bridge, Proxy)
+   - **Data Access Archetype:** ImportExportService, BackupService, CSV Services with Strategy and Adapter patterns
+   - **Data Storage Archetype:** CSV files (students, courses, enrollments) and timestamped backup folders
+
+3. **Archetype 2: Domain Model**
+   - Abstract Person with concrete Student and Instructor implementations
+   - Factory Method pattern hierarchy (PersonFactory → StudentFactory/InstructorFactory)
+   - Value objects (CourseCode) and enums (Semester, Grade)
+   - Domain entities with clear relationships (Enrollment references Student, Course, Semester, Grade)
+
+4. **Archetype 3: Design Pattern Integration**
+   - **Creational Patterns:** Singleton (AppConfig), Factory Method (PersonFactory)
+   - **Structural Patterns:** Adapter (ExportAdapter), Decorator (LoggingEnrollment), Bridge (Reporting), Proxy (DataStoreProxy)
+   - **Behavioral Patterns:** Strategy (Grading), Observer (EnrollmentObserver), Mediator (EnrollmentMediator)
+
+**Complete Layered Architecture (5 Layers):**
+
+- **Layer 1 - Presentation:** CliManager, CommandRegistry, 5 Management Helpers
+- **Layer 2 - Business Logic:** Core services with 7 design pattern implementations
+- **Layer 3 - Data Access:** Import/Export services, CSV handlers, Strategy and Adapter patterns
+- **Layer 4 - Domain & Utilities:** Domain models, Factory pattern, custom exceptions, utilities, Singleton configuration
+- **Layer 5 - Data Storage:** CSV files in data/ directory, timestamped backups in backup/ directory
+
+**Component Interaction Diagram:**
+- Documented data flow from User → ManagementHelper → Business Service → DataStore
+- Illustrated Observer pattern notification flow (Enrollment Logger/Notifier)
+- Mapped Mediator pattern coordination between services
+
+**Event-Driven Sub-Architecture:**
+- Event Producer: EnrollmentService emitting ENROLLMENT_CREATED/REMOVED events
+- Event Channel: Observer list with attach/detach/notify methods
+- Event Consumers: EnrollmentNotifier (console), EnrollmentLogger (audit), future consumers (email/SMS)
 
 ---
 
